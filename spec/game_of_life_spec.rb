@@ -38,7 +38,3 @@ describe 'Game of life' do
     end
   end
 end
-
-
-
-# expect(actual).to be(expected) # passes if actual.equal?(expected)
