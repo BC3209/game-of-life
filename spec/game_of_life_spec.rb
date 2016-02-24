@@ -29,12 +29,18 @@ describe 'Game of life' do
   context 'World' do
     subject { World.new }
 
-    it 'should create a new world' do
+    it 'should create a new world object' do
       expect(World).to be(World)
     end
+
     it 'should respond to the proper methods' do
       expect(subject).to respond_to(:rows)
       expect(subject).to respond_to(:columns)
+      expect(subject).to respond_to(:board)
+    end
+
+    it 'should create a new board on initialization' do
+      expect(subject.board).is_a?(Array)
     end
   end
 end
