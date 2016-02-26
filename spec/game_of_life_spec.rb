@@ -1,5 +1,5 @@
 require_relative './spec_helper'
-require_relative '../lib/cell'
+require_relative '../lib/game'
 
 describe 'Game of life' do
   context 'Cell' do
@@ -14,18 +14,19 @@ describe 'Game of life' do
       expect(subject).to respond_to(:y)
       expect(subject).to respond_to(:alive?)
       expect(subject).to respond_to(:dead?)
-      # expect(Cell).to be(:alive)
-      # subject.should respond_to(:alive)
     end
 
     it 'should be dead when it is created' do
       expect(subject.alive).to be_falsey
-      # subject.alive.should be_false
       expect(subject.x).to be == 0
       expect(subject.y).to be == 0
     end
   end
 
+# Let is 'lazy evaluated' meaning it isn't run until the method that it defines
+# is run for the first time
+# http://betterspecs.org/#let
+let!(:world) { World.new}
   context 'World' do
     subject { World.new }
 
@@ -37,10 +38,53 @@ describe 'Game of life' do
       expect(subject).to respond_to(:rows)
       expect(subject).to respond_to(:columns)
       expect(subject).to respond_to(:board)
+      expect(subject).to respond_to(:live_neighbor_count)
     end
 
     it 'should create a new board on initialization' do
       expect(subject.board).is_a?(Array)
+    end
+
+    it 'should detect a neighbor to the North' do
+      expect(subject.board[0][1]).to be_dead
+      subject.board[0][1].alive = true
+
+      subject.live_neighbor_count(subject.board[1][1]).count eq(1)
+    end
+  end
+
+  context 'Game' do
+    subject { Game.new }
+
+    it 'should create a new game object' do
+      expect(subject.is_a?(Game))
+    end
+
+    it 'should respond to proper methods' do
+      expect(subject).to respond_to(:world)
+      expect(subject).to respond_to(:cells)
+    end
+
+    it 'should plant seeds' do
+      game = Game.new(world, [[1, 2], [0, 2]])
+      expect(world.board[1][2]).to be_alive
+      expect(world.board[0][2]).to be_alive
+    end
+  end
+
+
+context 'Rules' do
+    let!(:game) { Game.new }
+
+    context 'Rule 1: Any cell with fewer than two live neighbors dies, as if caused by over population' do
+      it 'should kill a live cell with 1 live neighbor' do
+        # Both of these cells have fewer than two live neighbors
+        # Both of these should be dead in the next stage
+        game = Game.new(world, [[1, 0],[2, 0]])
+        game.evolve!
+        expect(world.board[1,0]).to be_dead
+        expect(world.board[2,0]).to be_dead
+      end
     end
   end
 end
