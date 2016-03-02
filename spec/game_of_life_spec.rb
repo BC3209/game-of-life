@@ -4,6 +4,7 @@ require_relative '../lib/game'
 describe 'Game of life' do
   context 'Cell' do
     subject { Cell.new }
+
     it 'should create a new cell object' do
       expect(Cell).to be(Cell)
     end
@@ -28,7 +29,7 @@ describe 'Game of life' do
 # http://betterspecs.org/#let
 let!(:world) { World.new}
   context 'World' do
-    subject { World.new }
+     subject { World.new }
 
     it 'should create a new world object' do
       expect(World).to be(World)
@@ -46,12 +47,24 @@ let!(:world) { World.new}
     end
 
     it 'should detect a neighbor to the North' do
-      expect(subject.board[0][1]).to be_dead
-      subject.board[0][1].alive = true
-
-      subject.live_neighbor_count(subject.board[1][1]).count eq(1)
+      cell = subject.board[1][1]
+      subject.board[cell.y - 1][cell.x].alive = true
+      subject.live_neighbor_count(cell).count.should == 1
     end
+
+    it 'should detect a neighbor to the NorthEast' do
+      cell = subject.board[1][1]
+      subject.board[cell.y - 1][cell.x + 1].alive = true
+      subject.live_neighbor_count(cell).count.should == 1
+    end
+    #
+    # it 'should detect a neighbor to the SouthEast' do
+    #   cell = subject.board[1][1]
+    #   subject.board[cell.y + 1][cell.x + 1].alive = true
+    #   subject.live_neighbor_count(cell).count eq(1)
+    # end
   end
+
 
   context 'Game' do
     subject { Game.new }
@@ -73,18 +86,18 @@ let!(:world) { World.new}
   end
 
 
-context 'Rules' do
-    let!(:game) { Game.new }
-
-    context 'Rule 1: Any cell with fewer than two live neighbors dies, as if caused by over population' do
-      it 'should kill a live cell with 1 live neighbor' do
-        # Both of these cells have fewer than two live neighbors
-        # Both of these should be dead in the next stage
-        game = Game.new(world, [[1, 0],[2, 0]])
-        game.evolve!
-        expect(world.board[1,0]).to be_dead
-        expect(world.board[2,0]).to be_dead
-      end
-    end
-  end
+# context 'Rules' do
+#     let!(:game) { Game.new }
+#
+#     context 'Rule 1: Any cell with fewer than two live neighbors dies, as if caused by over population' do
+#       it 'should kill a live cell with 1 live neighbor' do
+#         # Both of these cells have fewer than two live neighbors
+#         # Both of these should be dead in the next stage
+#         game = Game.new(world, [[1, 0],[2, 0]])
+#         game.evolve!
+#         expect(world.board[1,0]).to be_dead
+#         expect(world.board[2,0]).to be_dead
+#       end
+#     end
+#   end
 end

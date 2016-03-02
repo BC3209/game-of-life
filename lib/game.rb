@@ -10,7 +10,16 @@ class Game
       world.board[cell[0]][cell[1]].alive = true
     end
   end
-end
+
+  # def evolve?
+  # Rule: 1
+  #   board.cells.each do |cell|
+  #     if cell.alive? && cell.live_neighbor_count(cell).count < 2
+  #       cell.die!
+  #     end
+  #   end
+  end
+
 
 # WORLD CLASS
 class World
@@ -33,7 +42,6 @@ class World
     end
   end
 
-
   def live_neighbor_count(cell)
     live_neighbors = []
     # Neighbors to the North
@@ -41,7 +49,6 @@ class World
       live_cell = board[cell.y - 1][cell.x]
       live_neighbors << live_cell if live_cell.alive?
     end
-
     # Neighbors to the NorthEast
     # Neighbors to the SouthEast
     # Neighbors to the SouthWest
