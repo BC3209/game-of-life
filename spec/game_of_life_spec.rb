@@ -49,13 +49,13 @@ let!(:world) { World.new}
     it 'should detect a neighbor to the North' do
       cell = subject.board[1][1]
       subject.board[cell.y - 1][cell.x].alive = true
-      subject.live_neighbor_count(cell).count.should == 1
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
     end
 
     it 'should detect a neighbor to the NorthEast' do
       cell = subject.board[1][1]
       subject.board[cell.y - 1][cell.x + 1].alive = true
-      subject.live_neighbor_count(cell).count.should == 1
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
     end
     #
     # it 'should detect a neighbor to the SouthEast' do
