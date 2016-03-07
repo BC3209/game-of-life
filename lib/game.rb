@@ -11,11 +11,23 @@ class Game
     end
   end
 
-    def evolve?
+  def evolve!
+    world.cells.each do |cell|
       # Rule: 1
-      world.cells.each do |cell|
-        if cell.alive && world.live_neighbor_count(cell).count < 2
-          cell.die!
+      if cell.alive? && world.live_neighbor_count(cell).count < 2
+        cell.die!
+      end
+      # Rule: 2
+      if cell.alive? && world.live_neighbor_count(cell) == 2 || 3
+        cell.revive!
+      end
+      # Rule: 3
+      if cell.alive? && world.live_neighbor_count(cell).count > 3
+        cell.die!
+      end
+      # Rule: 4
+      if cell.dead? && world.live_neighor_count(cell).count == 3
+        cell.revive!
       end
     end
   end
@@ -46,34 +58,54 @@ class World
   end
 
   def live_neighbor_count(cell)
-    live_neighbors = []
+      live_neighbors = []
     # Neighbors to the North
     if cell.y > 0
       live_cell = board[cell.y - 1][cell.x]
       live_neighbors << live_cell if live_cell.alive?
     end
-    # Neighbors to the NorthEast
-    live_cell = board[cell.y - 1][cell.x + 1]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the SouthEast
-    live_cell = board[cell.y + 1][cell.x + 1]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the SouthWest
-    live_cell = board[cell.y + 1][cell.x - 1]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the NorthWest
-    live_cell = board[cell.y - 1][cell.x - 1]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the East
-    live_cell = board[cell.y][cell.x + 1]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the South
-    live_cell = board[cell.y + 1][cell.x]
-    live_neighbors << live_cell if live_cell.alive?
-    # Neighbors to the West
-    live_cell = board[cell.y][cell.x - 1]
-    live_neighbors << live_cell if live_cell.alive?
 
+    # Neighbors to the NorthEast
+    if cell.y > 0 && cell.x < (columns - 1)
+      live_cell = board[cell.y - 1][cell.x + 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the SouthEast
+    if cell.y < (rows - 1) && cell.x < (columns - 1)
+      live_cell = board[cell.y + 1][cell.x + 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the SouthWest
+    if cell.y < (rows - 1) && cell.x > 0
+      live_cell = board[cell.y + 1][cell.x - 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the NorthWest
+    if cell.y > 0 && cell.x > 0
+      live_cell = board[cell.y - 1][cell.x - 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the East
+    if cell.x < (columns - 1)
+      live_cell = board[cell.y][cell.x + 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the South
+    if cell.y < (rows - 1)
+      live_cell = board[cell.y + 1][cell.x]
+      live_neighbors << live_cell if live_cell.alive?
+    end
+
+    # Neighbors to the West
+    if cell.x > 0
+      live_cell = board[cell.y][cell.x - 1]
+      live_neighbors << live_cell if live_cell.alive?
+    end
     live_neighbors
   end
 end
@@ -94,5 +126,13 @@ class Cell
 
   def dead?
     !alive
+  end
+
+  def die!
+    @alive = false
+  end
+
+  def revive!
+    @alive = true
   end
 end

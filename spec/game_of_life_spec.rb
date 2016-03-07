@@ -15,6 +15,8 @@ describe 'Game of life' do
       expect(subject).to respond_to(:y)
       expect(subject).to respond_to(:alive?)
       expect(subject).to respond_to(:dead?)
+      expect(subject).to respond_to(:die!)
+      expect(subject).to respond_to(:revive!)
     end
 
     it 'should be dead when it is created' do
@@ -40,10 +42,15 @@ let!(:world) { World.new}
       expect(subject).to respond_to(:columns)
       expect(subject).to respond_to(:board)
       expect(subject).to respond_to(:live_neighbor_count)
+      expect(subject).to respond_to(:cells)
     end
 
     it 'should create a new board on initialization' do
       expect(subject.board).is_a?(Array)
+    end
+
+    it 'should add all the cells in the array' do
+      expect(subject.cells.count).to eq(9)
     end
 
     it 'should detect a neighbor to the North' do
@@ -57,12 +64,42 @@ let!(:world) { World.new}
       subject.board[cell.y - 1][cell.x + 1].alive = true
       expect(subject.live_neighbor_count(cell).count).to eq(1)
     end
-    #
-    # it 'should detect a neighbor to the SouthEast' do
-    #   cell = subject.board[1][1]
-    #   subject.board[cell.y + 1][cell.x + 1].alive = true
-    #   subject.live_neighbor_count(cell).count eq(1)
-    # end
+
+    it 'should detect a neighbor to the SouthEast' do
+      cell = subject.board[1][1]
+      subject.board[cell.y + 1][cell.x + 1].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
+
+    it 'should detect a neighbor to the SouthWest' do
+      cell = subject.board[1][1]
+      subject.board[cell.y + 1][cell.x - 1].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
+
+    it 'should detect a neighbor to the NorthWest' do
+      cell = subject.board[1][1]
+      subject.board[cell.y - 1][cell.x - 1].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
+
+    it 'should detect a neighbor to the East' do
+      cell = subject.board[1][1]
+      subject.board[cell.y][cell.x + 1].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
+
+    it 'should detect a neighbor to the South' do
+      cell = subject.board[1][1]
+      subject.board[cell. y + 1][cell.x].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
+
+    it 'should detect a neighbor to the West' do
+      cell = subject.board[1][1]
+      subject.board[cell.y][cell.x - 1].alive = true
+      expect(subject.live_neighbor_count(cell).count).to eq(1)
+    end
   end
 
 
@@ -86,18 +123,18 @@ let!(:world) { World.new}
   end
 
 
-# context 'Rules' do
-#     let!(:game) { Game.new }
-#
-#     context 'Rule 1: Any cell with fewer than two live neighbors dies, as if caused by over population' do
-#       it 'should kill a live cell with 1 live neighbor' do
-#         # Both of these cells have fewer than two live neighbors
-#         # Both of these should be dead in the next stage
-#         game = Game.new(world, [[1, 0],[2, 0]])
-#         game.evolve!
-#         expect(world.board[1,0]).to be_dead
-#         expect(world.board[2,0]).to be_dead
-#       end
-#     end
-#   end
+context 'Rules' do
+    let!(:game) { Game.new }
+
+    context 'Rule 1: Any cell with fewer than two live neighbors dies and' do
+      it 'should kill a live cell with 1 live neighbor' do
+        # Both of these cells have fewer than two live neighbors
+        # Both of these should be dead in the next stage
+        game = Game.new(world, [[1, 0],[2, 0]])
+        game.evolve!
+        expect(world.board[1][0]).to be_dead
+        expect(world.board[2][0]).to be_dead
+      end
+    end
+  end
 end
